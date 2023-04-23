@@ -15,6 +15,9 @@ app.use(cors())
 app.use(basicAuth({
     users: { 'bt66': 'bt66' }
 }))
+
+
+perkumpulan = false;
 // init whatsapp client
 const client = new Client({
     puppeteer: {headless: true, args: ['--no-sandbox', '--disable-setuid-sandbox']},
@@ -37,7 +40,19 @@ client.on('ready', () => {
     console.log('Client is ready!');
 });
 
-
+client.on('message', message => {
+	if(message.body === 'tr.checkPerkumpulan()') {
+		message.reply(`${perkumpulan}`);
+	}
+    if(message.body === 'tr.setPerkumpulan(true)') {
+        perkumpulan = true
+		message.reply(`perkumpulan is set to ${perkumpulan}`);
+	}
+    if(message.body === 'tr.setPerkumpulan(false)') {
+        perkumpulan = false
+		message.reply(`perkumpulan is set to ${perkumpulan}`);
+	}
+});
 
 app.post('/send_message',
     body('phone_number').notEmpty(),
@@ -51,7 +66,10 @@ app.post('/send_message',
                 const chatId = number.substring(1) + "@c.us";
                 // send message
                 client.sendMessage(chatId, text);
-                return res.status(200).send(req.body);
+                return res.status(200).json({
+                    status: "ok",
+                    detail : req.body
+                });
             }catch(err) {
                 console.log(err)
                 return res.status(500).send(err)
