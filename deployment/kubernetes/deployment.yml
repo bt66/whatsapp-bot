@@ -15,7 +15,7 @@ spec:
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: web
+  name: whatsapp-bot
 spec:
   selector:
     matchLabels:
@@ -28,16 +28,19 @@ spec:
       labels:
         app: whatsapp-bot # has to match .spec.selector.matchLabels
     spec:
-      terminationGracePeriodSeconds: 10
+      securityContext:
+        runAsUser: 999
+        runAsGroup: 999
+        fsGroup: 999
       containers:
       - name: whatsapp-bot
-        image: docker.io/bt66/whatsapp-bot:v1
+        image: docker.io/bt66/whatsapp-bot:v1.1
         ports:
         - containerPort: 3000
           name: whatsapp-bot
         volumeMounts:
         - name: session-volume
-          mountPath: /usr/src/app/.wwebjs_auth
+          mountPath: /home/pptruser/whatsapp-bot/.wwebjs_auth
   volumeClaimTemplates:
   - metadata:
       name: session-volume
