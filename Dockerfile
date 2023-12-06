@@ -35,6 +35,7 @@ COPY package*.json ./
 USER root
 
 RUN chown -R pptruser:root /home/pptruser/whatsapp-bot/*
+RUN chown -R pptruser:root /home/pptruser/whatsapp-bot
 
 USER pptruser
 
@@ -47,4 +48,4 @@ COPY . .
 
 EXPOSE 3000
 USER pptruser
-CMD [ "node", "main.js" ]
+CMD [ "node", "index.js" ]

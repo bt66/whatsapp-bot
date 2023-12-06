@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bot-monitoring
+  namespace: pr
+spec:
+  selector:
+    matchLabels:
+      run: bot-monitoring
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        run: bot-monitoring
+    spec:
+      containers:
+        - name: bot-monitoring
+          image: registry.carakan.id/bastian/whatsapp-bot-monitoring:v1.0
+          ports:
+            - containerPort: 3000
+      imagePullSecrets:
+        - name: registry-carakan
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: bot-monitoring-service
+  namespace: pr
+spec:
+  type: NodePort
+  selector:
+    run: bot-monitoring
+  ports:
+    - port: 3000
